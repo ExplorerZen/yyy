@@ -25,10 +25,14 @@
             height: 100%;
         }
 
+        #pinkboard {
+            display: none;
+        }
+
         .namebox {
             color: #ff5ba5;
             position: absolute;
-            z-index: 9999;
+            z-index: 10000;
             top: 50%;
             left: 50%;
             -webkit-transform: translate(-50%, -50%);
@@ -37,10 +41,142 @@
             -o-transform: translate(-50%, -50%);
             transform: translate(-50%, -50%);
             transition: 1s;
+            text-align: center;
+            pointer-events: none;
         }
 
-        .namebox h1 {
-            margin: 0 auto;
+        .letter-scene {
+            position: relative;
+            width: min(90vw, 420px);
+            max-width: calc(100vw - 2rem);
+            height: 290px;
+            perspective: 900px;
+        }
+
+        .envelope {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 170px;
+            filter: drop-shadow(0 12px 20px rgba(0, 0, 0, 0.3));
+        }
+
+        .envelope-back,
+        .envelope-front,
+        .envelope-flap {
+            position: absolute;
+            inset: 0;
+        }
+
+        .envelope-back {
+            z-index: 1;
+            background: linear-gradient(145deg, #f8b5cc, #d9759b);
+            clip-path: polygon(0 0, 50% 38%, 100% 0, 100% 100%, 0 100%);
+        }
+
+        .letter-paper {
+            position: absolute;
+            z-index: 2;
+            left: 4%;
+            bottom: 18px;
+            box-sizing: border-box;
+            display: grid;
+            place-items: start center;
+            width: 92%;
+            height: min(72vh, 600px);
+            padding: 2rem 1.25rem 1rem;
+            overflow-y: auto;
+            border: 1px solid #f3e8e4;
+            border-radius: 3px;
+            background: repeating-linear-gradient(#fffdf9, #fffdf9 31px, #f4e8e5 32px);
+            box-shadow: 0 2px 8px rgba(77, 33, 48, 0.18);
+            transform: translateY(calc(100% + 20px));
+            visibility: hidden;
+            transition: transform 900ms cubic-bezier(0.2, 0.75, 0.25, 1), visibility 0s 900ms;
+        }
+
+        .letter-message {
+            margin: 0;
+            color: #9c4265;
+            width: 100%;
+            white-space: pre-wrap;
+            overflow-wrap: anywhere;
+            text-align: center;
+            font: 1.75rem/1.45 "Segoe Script", "Brush Script MT", "Apple Chancery", cursive;
+            opacity: 0;
+            transform: translateY(12px);
+            transition: opacity 450ms ease 450ms, transform 450ms ease 450ms;
+        }
+
+        .envelope-flap {
+            z-index: 3;
+            height: 100%;
+            background: linear-gradient(160deg, #f9c0d2, #df8aa8);
+            clip-path: polygon(0 0, 100% 0, 50% 55%);
+            transform: rotateX(0);
+            transform-origin: top;
+            transition: transform 650ms ease, z-index 0s 325ms;
+        }
+
+        .envelope-front {
+            z-index: 4;
+            background: linear-gradient(135deg, #e99ab5, #cf6f93);
+            clip-path: polygon(0 0, 50% 58%, 100% 0, 100% 100%, 0 100%);
+        }
+
+        .letter-toggle {
+            position: absolute;
+            z-index: 5;
+            left: 50%;
+            bottom: 36px;
+            width: 52px;
+            height: 52px;
+            padding: 0;
+            border: 3px solid rgba(255, 236, 243, 0.9);
+            border-radius: 50%;
+            background: radial-gradient(circle at 35% 30%, #f9c7d8, #c95780 75%);
+            box-shadow: 0 3px 8px rgba(91, 30, 52, 0.35), inset 0 1px 5px rgba(255, 255, 255, 0.8);
+            color: #fff3f7;
+            cursor: pointer;
+            font: italic 1.8rem/1 "Brush Script MT", "Segoe Script", cursive;
+            transform: translateX(-50%);
+            transition: transform 250ms ease, opacity 250ms ease;
+        }
+
+        .letter-toggle:hover {
+            transform: translateX(-50%) scale(1.08);
+        }
+
+        .letter-toggle:focus-visible {
+            outline: 2px solid #fff;
+            outline-offset: 4px;
+        }
+
+        .namebox.is-open .letter-paper {
+            transform: translateY(-132px);
+            visibility: visible;
+            transition: transform 900ms cubic-bezier(0.2, 0.75, 0.25, 1), visibility 0s;
+        }
+
+        .namebox.is-open .letter-message {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .namebox.is-open .envelope-flap {
+            z-index: 1;
+            transform: rotateX(180deg);
+            transition: transform 650ms ease, z-index 0s;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .letter-paper,
+            .letter-message,
+            .envelope-flap,
+            .letter-toggle {
+                transition-duration: 0.01ms;
+                transition-delay: 0ms;
+            }
         }
     </style>
 
@@ -67,8 +203,46 @@
     <script src="js/heart.js"></script>
     <script src="js/matrix.js"></script>
     <div class="namebox" style="opacity: 0;">
-        <h1 style="font-family: 'Comic Sans MS', cursive, sans-serif;">Wuv U&#10084;&#65039;Bao Bao</h1>
+        <div class="letter-scene">
+            <div class="envelope">
+                <div class="envelope-back"></div>
+                <div class="letter-paper">
+                    <p class="letter-message" id="letter-message" aria-hidden="true">When your nose scrunches, my heart goes heavy and light at once. Your eyes give me hope. Your smile warms me. Anyone in their right mind would hold on to a gem right in front of them.
+
+So the universe testing us before we've even begun makes no sense to me. Maybe it's afraid of what we could be. How do I look away from something I've already seen?
+
+Impossibile.
+
+The distance makes my heart ache, but it means nothing else gets in the way of loving you. If this is a test, I take it wholeheartedly. Knights get stronger with every one.
+
+I haven't always been at my best. I've let alcohol cause arguments between us, and I hate that I'm the reason you were hurt.
+
+You keep my heart in a box, and you have the power to hurt me. I'm trusting you with it anyway.
+
+I pray we get through this. I'm too stubborn to give up on us.
+
+I want you for you.</p>
+                </div>
+                <div class="envelope-flap"></div>
+                <div class="envelope-front"></div>
+                <button class="letter-toggle" type="button" aria-label="Open the letter" aria-expanded="false"
+                    aria-controls="letter-message" disabled>C</button>
+            </div>
+        </div>
     </div>
+    <script>
+        const letterButton = document.querySelector('.letter-toggle');
+        const letterScene = document.querySelector('.namebox');
+        const letterMessage = document.getElementById('letter-message');
+
+        letterButton.addEventListener('click', function () {
+            const isOpen = letterButton.getAttribute('aria-expanded') === 'true';
+            letterScene.classList.toggle('is-open', !isOpen);
+            letterButton.setAttribute('aria-expanded', String(!isOpen));
+            letterButton.setAttribute('aria-label', isOpen ? 'Open the letter' : 'Close the letter');
+            letterMessage.setAttribute('aria-hidden', String(isOpen));
+        });
+    </script>
 
 </body>
 

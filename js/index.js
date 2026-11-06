@@ -598,6 +598,8 @@ S.ShapeBuilder = (function () {
       var elements = document.getElementsByClassName('namebox');
       for (var i = 0; i < elements.length; i++) {
         elements[i].style.opacity = 1; // Set opacity to 100%
+        elements[i].style.pointerEvents = 'auto';
+        elements[i].querySelector('.letter-toggle').disabled = false;
       }
       var settings = {
         particles: {
